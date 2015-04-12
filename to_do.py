@@ -3,33 +3,30 @@
 Питоновский скрипт, который при запуске без аргументов показывает текущий список задач
 С аргументом 'add' запись с порядковым номером  в список задач
 С аргументом 'update' + id возвращает текущее значение и предлагает  перезаписать строку
-С аргументом 'del' + id удаляет запись
+С аргументом 'remove' + id удаляет запись
 С аргументом 'done' + id удаляет запись и помещает её в лог
 C аргументом 'log' получаем лог
-C аргументом 'clear' лог очищаем
-C аргументом 'help' выводим содержимое данного докстринга
+C аргументом 'rmlog' лог очищаем
 В конце каждого вызова отображается последняя версия списка
 
 """
-import kwargs
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--add')
+parser.add_argument('--update')
+parser.add_argument('--remove')
+parser.add_argument('--done')
+parser.add_argument('--log')
+parser.add_argument('--rmlog')
+args = vars(parser.parse_args())
 
-class List(object): 
-   def __init__(self, list_of_entries, last_modified):
-       self.list_of_entries = list_of_entries
-       self.last_modified = last_modified
-       
-   def show_list():
-       self.list_of_entries = {}
-       print()
-      
 
 class Entry(object):
-    def __init__(self, id, entry):
-        self.id = id
-        self.entry = entry
+    def __init__(self):
+        pass
 
-    def create_entry():
+    def create_entry(self):
         """
         Создаем новую запись 
         Генерируем для нее id
@@ -37,21 +34,30 @@ class Entry(object):
         """
         pass
 
-    def modify_entry():
+
+    def modify_entry(self):
         """
         Модифицируем запись по ключу-id
         Возвращаем список
         """
         pass
 
-    def delete_entry():
+    def delete_entry(self):
         """
         При удалении записи надо не забывать обновлять все айдишники
         Возвращаем обновленный лист
         """
         pass
 
-    def mark_as_done():
+    def mark_as_done(self):
+        """
+        Копируем запись в лог
+        Удаляем запись из списка
+        Обновляем айдишники
+        """
+        pass
+
+    def show_list(self):
         """
         Копируем запись в лог
         Удаляем запись из списка
@@ -61,15 +67,31 @@ class Entry(object):
 
 
 class Log(object):
-   def __init__(self):
-       pass
+    def __init__(self):
+        pass
 
-   def show_log():
-       pass
+    def show_log(self):
+        pass
 
-   def clear_log():
-       pass
+    def clear_log(self):
+        pass
 
-if name == "__main__":
-   start = List()
-   start.show_list()
+
+if __name__ == "__main__":
+    start = Entry()
+    log = Log()
+
+    if args['add']:
+        start.create_enrty()
+    elif args['update']:
+        start.modify_entry()
+    elif args['remove']:
+        start.delete_entry()
+    elif args['done']:
+        start.mark_as_done()
+    elif args['log']:
+        log.show_log()
+    elif args['rmlog']:
+        log.clear_log()
+    else:
+        start.show_list()
