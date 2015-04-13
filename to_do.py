@@ -11,20 +11,12 @@ C аргументом 'rmlog' лог очищаем
 
 """
 import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('--add')
-parser.add_argument('--update')
-parser.add_argument('--remove')
-parser.add_argument('--done')
-parser.add_argument('--log')
-parser.add_argument('--rmlog')
-args = vars(parser.parse_args())
+import os.path
 
 
-class Entry(object):
-    def __init__(self):
-        pass
+class Entry():
+    def __init__(self, entry):
+        self.entry = entry
 
     def create_entry(self):
         """
@@ -32,7 +24,31 @@ class Entry(object):
         Генерируем для нее id
         Возвращаем список
         """
-        pass
+
+        if os.path.isfile('todo_list.dat'):
+            notes_file = open('todo_list.dat', 'r')
+            lst = notes_file.readlines()
+            last_line = lst[len(lst)-1]
+            prev_number = last_line.split(':')
+            element = prev_number[0]
+            num_raw = int(element[1:].replace("'", "", 2)) + 1
+            num = str(num_raw)
+            notes_file.close()
+            notes_file = open('todo_list.dat', 'a')
+            entry_row_raw = str(dict.fromkeys(num, row)) + '\n'
+            entry_row = entry_row_raw
+            notes_file.write(entry_row)
+            notes_file.close()
+        else:
+            notes_file = open('todo_list.dat', 'w+')
+            num = '1'
+            entry_row_raw = str(dict.fromkeys(num, row)) + '\n'
+            entry_row = entry_row_raw
+            notes_file.write(entry_row)
+            notes_file.close()
+
+        self.show_list()
+        return
 
 
     def modify_entry(self):
@@ -63,7 +79,12 @@ class Entry(object):
         Удаляем запись из списка
         Обновляем айдишники
         """
-        pass
+        notes_file = open('todo_list.dat')
+        lines = notes_file.readlines()
+        for line in lines:
+            list_content = line[1:].replace('}', '')
+            print(list_content, end='\r')
+        return
 
 
 class Log(object):
@@ -78,20 +99,25 @@ class Log(object):
 
 
 if __name__ == "__main__":
-    start = Entry()
-    log = Log()
+        parser = argparse.ArgumentParser()
+        parser.add_argument('command', nargs='?')
+        parser.add_argument('entry', nargs='?')
+        args = parser.parse_args()
+        row = args.entry
 
-    if args['add']:
-        start.create_enrty()
-    elif args['update']:
-        start.modify_entry()
-    elif args['remove']:
-        start.delete_entry()
-    elif args['done']:
-        start.mark_as_done()
-    elif args['log']:
-        log.show_log()
-    elif args['rmlog']:
-        log.clear_log()
-    else:
-        start.show_list()
+        entry_list = Entry(row)
+
+        if args.command == 'add':
+            entry_list.create_entry()
+        elif args.command == 'update':
+            entry_list.modify_entry()
+        elif args.command == 'remove':
+            entry_list.delete_entry()
+        elif args.command == 'done':
+            entry_list.mark_as_done()
+        elif args.command == 'log':
+            show_log()
+        elif args.command == 'rmlog':
+            clear_log()
+        else:
+            entry_list.show_list()
